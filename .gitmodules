@@ -1,0 +1,3 @@
+[submodule "src/yolo-tensorrt"]
+	path = src/yolo-tensorrt
+	url = https://github.com/enazoe/yolo-tensorrt
