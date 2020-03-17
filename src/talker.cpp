@@ -10,14 +10,46 @@
 #include <ctime>
 #include <ratio>
 
+// include the following for parsing and using the jetbot camera input
+#include <image_transport/image_transport.h>
+#include <cv_bridge/cv_bridge.h>
+#include <sensor_msgs/image_encodings.h>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+
+
+
+// image callback function to process received message
+void imageCallback(const sensor_msgs::ImageConstPtr& msg, Detector &detector, std::vector<Result> &res)
+{
+  cv_bridge::CvImagePtr cv_ptr;
+  
+  try
+  {
+    cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
+  }
+  catch (cv_bridge::Exception& e)
+  {
+    ROS_ERROR("Could not convert from '%s' to 'bgr8'.", msg->encoding.c_str());
+  }
+
+  // run inference with detector
+  if (cv_ptr->image.rows > 60 && cv_ptr->image.cols > 60)
+  {
+    detector.detect(cv_ptr->image, res);
+  }
+
+  // can update GUI window here
+
+  // output modified video stream
+}
+
 int main(int argc, char **argv)
 {
+  // TODO: rename 'talker' to more appropriate name
   ros::init(argc, argv, "talker");
-
   ros::NodeHandle n;
-
   ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
-
   ros::Rate loop_rate(10);
 
   // construct path to the configs
@@ -34,15 +66,20 @@ int main(int argc, char **argv)
   config.detect_thresh = 0.3;
   detector.init(config);
 
-  cv::Mat mat_image = cv::imread(img_path, cv::IMREAD_UNCHANGED);
-
   std::vector<Result> res;
 
-  auto t0 = std::chrono::high_resolution_clock::now();
-  detector.detect(mat_image, res);
-  auto t1 = std::chrono::high_resolution_clock::now();
+  // grab image from an image stream
+  image_transport::ImageTransport it(n);
+  image_transport::Subscriber sub = it.subscribe("jetbot_camera/raw", 1, 
+    [&detector, &res](const sensor_msgs::ImageConstPtr& msg) -> void {imageCallback(msg, detector, res);});
 
-  std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t1 - t0);
+  cv::Mat mat_image = cv::imread(img_path, cv::IMREAD_UNCHANGED);
+
+  // auto t0 = std::chrono::high_resolution_clock::now();
+  // detector.detect(mat_image, res);
+  // auto t1 = std::chrono::high_resolution_clock::now();
+
+  // std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t1 - t0);
 
   /**
    * A count of how many messages we have sent. This is used to create
@@ -58,7 +95,9 @@ int main(int argc, char **argv)
 
     std::stringstream ss;
     ss << "publishing yolo results " << count << std::endl;
-    ss << "inference duration = " << time_span.count() << " seconds." << std::endl;
+    // ss << "inference duration = " << time_span.count() << " seconds." << std::endl;
+
+    // DEBUG
     // ss << cfg_path << std::endl;
     // ss << weights_path << std::endl;
     // ss << img_path << std::endl;
