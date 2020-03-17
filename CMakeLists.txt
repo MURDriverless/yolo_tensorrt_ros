@@ -12,6 +12,9 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   roslib
+  sensor_msgs
+  cv_bridge
+  image_transport
 )
 
 ## Look for gflags
@@ -79,3 +82,9 @@ add_dependencies(talker beginner_tutorials_generate_messages_cpp)
 add_executable(listener src/listener.cpp)
 target_link_libraries(listener ${catkin_LIBRARIES})
 add_dependencies(listener beginner_tutorials_generate_messages_cpp)
+
+
+## define executable for image converter
+add_executable(image_converter src/image_converter.cpp)
+target_link_libraries(image_converter ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+add_dependencies(image_converter ${PROJECT_NAME}_generate_messages_cpp)
