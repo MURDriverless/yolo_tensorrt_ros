@@ -17,7 +17,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-
+static const std::string OPENCV_WINDOW = "Image window";
 
 // image callback function to process received message
 void imageCallback(const sensor_msgs::ImageConstPtr& msg, Detector &detector, std::vector<Result> &res)
@@ -37,11 +37,19 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, Detector &detector, st
   if (cv_ptr->image.rows > 60 && cv_ptr->image.cols > 60)
   {
     detector.detect(cv_ptr->image, res);
+    
+    // draw bounding box if the result is not empty
+    if (!res.empty()) {
+      cv::rectangle(cv_ptr->image, res[0].rect, CV_RGB(0,0,255));
+    } 
   }
 
-  // can update GUI window here
+  // update GUI window here
+  cv::imshow(OPENCV_WINDOW, cv_ptr->image);
+  cv::waitKey(3);
 
   // output modified video stream
+  // image_pub_.publish(cv_ptr->toImageMsg());
 }
 
 int main(int argc, char **argv)

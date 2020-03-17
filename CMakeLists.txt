@@ -74,7 +74,7 @@ target_link_libraries(detector nvinfer nvinfer_plugin nvcaffe_parser gflags "std
 
 
 if(CUDA_VERSION_MAJOR GREATER 9)
-	target_link_libraries(talker detector opencv_core opencv_calib3d opencv_dnn ${catkin_LIBRARIES})
+	target_link_libraries(talker detector opencv_core opencv_calib3d opencv_dnn ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 endif()
 
 add_dependencies(talker beginner_tutorials_generate_messages_cpp)
