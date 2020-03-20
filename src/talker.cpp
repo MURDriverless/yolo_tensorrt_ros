@@ -3,7 +3,6 @@
 #include <ros/package.h>
 
 #include <sstream>
-
 #include "class_detector.h"
 
 #include <chrono>
