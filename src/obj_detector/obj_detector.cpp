@@ -8,9 +8,9 @@
  *  cfg     - name of the model config file
  *  weights - name of the weights file
  */
-ObjDetector::OBjDetector(const string & package, const string & cfg, const string & weights) {
+ObjDetector::ObjDetector(const string &package, const string &cfg, const string &weights) {
     // setup the required paths to model and weights
-    pkg_path = ros::package::getpath(package);
+    pkg_path = ros::package::getPath(package);
     cfg_path = pkg_path + "/src/config/" + cfg;
     weights_path = pkg_path + "/src/config/" + weights;
 
@@ -25,8 +25,8 @@ ObjDetector::OBjDetector(const string & package, const string & cfg, const strin
 /* Perform inferene using the object detector
  *  image   - the image to perform inference on 
  */
-vector<result> ObjDetector::RunDetector(cv::Mat image) const {
-    vector<result> res;
+vector<Result> ObjDetector::RunDetector(cv::Mat image) {
+    vector<Result> res;
 
     detector.detect(image, res);
 

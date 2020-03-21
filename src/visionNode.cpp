@@ -1,7 +1,8 @@
 #include "ros/ros.h"
-#include "std_msg/String.h"
+#include "std_msgs/String.h"
 #include <sstream>
-// #include "vision/vision.h" // TODO: add after strucutre is implemented
+
+#include "obj_detector/obj_detector.h"
 
 int main(int argc, char ** argv)
 {

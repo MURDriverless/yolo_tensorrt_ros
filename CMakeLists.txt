@@ -88,3 +88,13 @@ add_dependencies(listener beginner_tutorials_generate_messages_cpp)
 add_executable(image_converter src/image_converter.cpp)
 target_link_libraries(image_converter ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 add_dependencies(image_converter ${PROJECT_NAME}_generate_messages_cpp)
+
+## prepare object detector library target
+add_library(objDetector src/obj_detector/obj_detector.cpp)
+target_include_directories(objDetector PRIVATE src/yolo-tensorrt/modules/ src/yolo-tensorrt/extra/ D:/dependency/gflag/include ${CUDA_TOOLKIT_ROOT_DIR}/include D:/dependency/TensorRT-5.1.5.0_cuda-10.0_cudnn-7.5/include D:/dependency/OPENCV341/include ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
+target_link_libraries(objDetector nvinfer nvinfer_plugin nvcaffe_parser gflags "stdc++fs")
+
+## define executable for vision node
+add_executable(vision src/visionNode.cpp)
+target_include_directories(vision PRIVATE src/yolo-tensorrt/modules/ src/yolo-tensorrt/extra/)
+target_link_libraries(vision ${catkin_LIBRARIES} objDetector)

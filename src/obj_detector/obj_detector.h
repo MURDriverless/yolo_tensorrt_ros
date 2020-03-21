@@ -21,8 +21,9 @@ private:
     Config config;
 
 public:
-    ObjDetector(const string & config, const string & cfg, const string & weights);
-    vector<Result> run_detector();
-}
+    ObjDetector(const string &config, const string &cfg, const string &weights);
+    vector<Result> RunDetector(cv::Mat image);
+
+};
 
 #endif
