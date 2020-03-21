@@ -1,0 +1,5 @@
+# ignore all tensorrt .engine files
+*.engine
+
+# ignore all darknet .weights files 
+*.weights 
